@@ -1,36 +1,28 @@
 class OrderModel {
   final String id;
-  final String imageUrl;
-  final String name;
-  final String detail;
-  final double price;
-  final String status; // 'in_order', 'in_process', 'complete'
+  final String nomorPesanan;
+  final String customerName;
+  final double total;
+  final String status;
+  final DateTime createdAt;
 
   OrderModel({
     required this.id,
-    required this.imageUrl,
-    required this.name,
-    required this.detail,
-    required this.price,
+    required this.nomorPesanan,
+    required this.customerName,
+    required this.total,
     required this.status,
+    required this.createdAt,
   });
-}
 
-// models/menu_model.dart
-class MenuModel {
-  final String id;
-  final String imageUrl;
-  final String title;
-  final String description;
-  final double price;
-  final String category; // 'food', 'drink', 'snack'
-
-  MenuModel({
-    required this.id,
-    required this.imageUrl,
-    required this.title,
-    required this.description,
-    required this.price,
-    required this.category,
-  });
+  factory OrderModel.fromJson(Map<String, dynamic> json) {
+    return OrderModel(
+      id: json['id'],
+      nomorPesanan: json['nomor_pesanan'],
+      customerName: json['customer_name'],
+      total: (json['total'] as num).toDouble(),
+      status: json['status'],
+      createdAt: DateTime.parse(json['created_at']),
+    );
+  }
 }

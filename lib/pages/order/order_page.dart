@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'in_order_tab.dart';
-import 'in_process_tab.dart';
-import 'complete_tab.dart';
+import 'order_tab.dart';
 
 class OrderPage extends StatelessWidget {
   const OrderPage({super.key});
@@ -12,38 +10,20 @@ class OrderPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Orders'),
+          title: const Text("Orders"),
           bottom: const TabBar(
             tabs: [
-              Tab(text: 'In Order'),
-              Tab(text: 'In Process'),
-              Tab(text: 'Complete'),
+              Tab(text: "In Order"),
+              Tab(text: "In Process"),
+              Tab(text: "Complete"),
             ],
           ),
         ),
-        body: Column(
+        body: const TabBarView(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search orders...',
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  InOrderTab(),
-                  InProcessTab(),
-                  CompleteTab(),
-                ],
-              ),
-            ),
+            OrderTab(status: 'In Order'),
+            OrderTab(status: 'In Process'),
+            OrderTab(status: 'Complete'),
           ],
         ),
       ),
