@@ -11,7 +11,7 @@ class AdminService {
       id: json['id'],
       email: json['email'],
       username: json['username'],
-      password: json['password'],
+      password: json['password'], role: '2',
     )).toList();
   }
 }

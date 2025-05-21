@@ -1,43 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/order_model.dart';
-import '../services/order_service.dart';
-import 'package:admin_bicopi/models/order_detail_model.dart';
 
-class OrderProvider with ChangeNotifier {
-  List<OrderDetailModel> _details = [];
+class OrderProvider extends ChangeNotifier {
+  final SupabaseClient supabase = Supabase.instance.client;
 
-  List<OrderDetailModel> get details => _details;
-
-  Future<void> fetchOrderDetails(String pesananId) async {
-    try {
-      _details = await _orderService.fetchOrderDetails(pesananId);
-      notifyListeners();
-    } catch (e) {
-      debugPrint("Error fetching details: $e");
-    }
-  }
-
-  Future<void> updateOrderStatus(String id, String newStatus) async {
-    await _orderService.updateOrderStatus(id, newStatus);
-    await fetchOrders(newStatus);
-  }
-  final OrderService _orderService = OrderService();
   List<OrderModel> _orders = [];
 
   List<OrderModel> get orders => _orders;
-  bool isLoading = false;
 
-  Future<void> fetchOrders(String status) async {
-    isLoading = true;
-    notifyListeners();
-    try {
-      _orders = await _orderService.fetchOrdersByStatus(status);
-    } catch (e) {
-      debugPrint("Error fetching orders: $e");
-      _orders = [];
-    }
+  Future<void> fetchOrders() async {
+    final response = await supabase
+        .from('orderkasir_history')
+        .select()
+        .order('created_at', ascending: false);
+    _orders = (response as List)
+        .map((e) => OrderModel.fromJson(e as Map<String, dynamic>))
+        .toList();
 
-    isLoading = false;
     notifyListeners();
+  }
+
+  Future<List<OrderModel>> fetchOrdersByStatus(String status) async {
+    final response = await supabase
+        .from('orderkasir_history')
+        .select()
+        .eq('catatan', status)
+        .order('created_at', ascending: false);
+
+    final List<OrderModel> orders = (response as List)
+        .map((e) => OrderModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+
+    return orders;
+  }
+
+  List<OrderModel> getByStatus(String status) {
+    return _orders.where((order) => order.status == status).toList();
+  }
+
+  Future<void> updateOrderStatus(int id, String nextStatus) async {
+    await supabase.from('orderkasir_history').update({
+      'catatan': nextStatus,
+    }).eq('id', id);
+    await fetchOrders(); // Refresh list
   }
 }

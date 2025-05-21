@@ -13,10 +13,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  final _pages = const [
-    OrderPage(),
-    MenuPage(),
-    OptionPage(),
+  final List<Widget> _pages = [
+    const OrderPage(),
+    const MenuPage(),
+    const OptionPage(),
   ];
 
   @override
@@ -25,10 +25,12 @@ class _HomePageState extends State<HomePage> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: (value) => setState(() => _selectedIndex = value),
+        onTap: (index) {
+          setState(() => _selectedIndex = index);
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Order'),
-          BottomNavigationBarItem(icon: Icon(Icons.restaurant), label: 'Menu'),
+          BottomNavigationBarItem(icon: Icon(Icons.restaurant_menu), label: 'Menu'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Option'),
         ],
       ),

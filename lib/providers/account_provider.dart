@@ -19,10 +19,23 @@ class AccountProvider with ChangeNotifier {
   List<admin_model.AdminModel> get admins => _admins;
   List<AffiliateModel> get affiliates => _affiliates;
 
+  bool isLoading = false;
+  String? error;
+
   Future<void> loadAllAccounts() async {
-    _users = await _userService.fetchUsers();
-    _admins = await _adminService.fetchAdmins();
-    _affiliates = await _affiliateService.fetchAffiliates();
+    isLoading = true;
+    error = null;
     notifyListeners();
+
+    try {
+      _users = await _userService.fetchUsers();
+      _admins = await _adminService.fetchAdmins();
+      _affiliates = await _affiliateService.fetchAffiliates();
+    } catch (e) {
+      error = 'Gagal memuat data akun: $e';
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

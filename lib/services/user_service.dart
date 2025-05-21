@@ -15,7 +15,7 @@ class UserService {
       photoUrl: json['photo_url'],
       username: json['username'],
       password: json['password'],
-      point: json['point'],
+      point: json['point'], role: '1',
     )).toList();
   }
 }
