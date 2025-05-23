@@ -64,14 +64,14 @@ class OrderList extends StatelessWidget {
               final order = orders[index];
               return OrderCard(
                 order: order,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => OrderDetailPage(order: order),
-                    ),
-                  );
-                },
+                // onTap: () {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (_) => OrderDetailPage(order: order),
+                //     ),
+                //   );
+                // },
               );
             },
           );

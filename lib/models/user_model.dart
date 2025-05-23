@@ -1,39 +1,69 @@
 class UserModel {
-  final String id;
-  final String name;
-  final String email;
-  final String phone;
-  final String photoUrl;
-  final String username;
-  final String password;
-  final int point;
-  final String role; // Tambahkan ini
-
   UserModel({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.photoUrl,
-    required this.username,
-    required this.password,
-    required this.point,
-    required this.role,
+    required this.namaLengkap,
+    required this.totalPoints,
+    required this.users,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  final String? namaLengkap;
+  final int? totalPoints;
+  final Users? users;
+
+  factory UserModel.fromJson(Map<String, dynamic> json){
     return UserModel(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      photoUrl: json['photo_url'],
-      username: json['username'],
-      password: json['password'],
-      point: json['point'],
-      role: json['role'], // Ambil dari Supabase
+      namaLengkap: json["nama_lengkap"],
+      totalPoints: json["total_points"],
+      users: json["users"] == null ? null : Users.fromJson(json["users"]),
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    "nama_lengkap": namaLengkap,
+    "total_points": totalPoints,
+    "users": users?.toJson(),
+  };
+
 }
 
+class Users {
+  Users({
+    required this.email,
+    required this.phone,
+    required this.idUser,
+    required this.password,
+    required this.username,
+    required this.photoUrl,
+    required this.idUserLevel,
+  });
 
+  final String email;
+  final String? phone;
+  final String? idUser;
+  final String? password;
+  final String? username;
+  final dynamic photoUrl;
+  final int? idUserLevel;
+
+  factory Users.fromJson(Map<String, dynamic> json){
+    return Users(
+      email: json["email"],
+      phone: json["phone"],
+      idUser: json["id_user"],
+      password: json["password"],
+      username: json["username"],
+      photoUrl: json["photo_url"],
+      idUserLevel: json["id_user_level"],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    "email": email,
+    "phone": phone,
+    "id_user": idUser,
+    "password": password,
+    "username": username,
+    "photo_url": photoUrl,
+    "id_user_level": idUserLevel,
+  };
+
+}

@@ -5,17 +5,26 @@ class UserService {
   final supabase = Supabase.instance.client;
 
   Future<List<UserModel>> fetchUsers() async {
-    final response = await supabase.from('users').select();
+    final response = await supabase.from('members').select('''
+          nama_lengkap,
+          total_points,
+          users (
+            id_user,
+            email,
+            phone,
+            username,
+            password,
+            photo_url,
+            id_user_level
+          )
+        ''');
+    // .eq('users.id_user_level', 1);
+    print('Fetched user response: $response');
+    return (response as List)
+        .map(
+          (json) => UserModel.fromJson(json)
 
-    return (response as List).map((json) => UserModel(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      photoUrl: json['photo_url'],
-      username: json['username'],
-      password: json['password'],
-      point: json['point'], role: '1',
-    )).toList();
+        )
+        .toList();
   }
 }

@@ -48,14 +48,14 @@ class _OrderPageState extends State<OrderPage> with SingleTickerProviderStateMix
             itemBuilder: (context, index) {
               return OrderCard(
                 order: orders[index],
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => OrderDetailPage(order: orders[index]),
-                    ),
-                  );
-                },
+                // onTap: () {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (_) => OrderDetailPage(order: orders[index]),
+                //     ),
+                //   );
+                // },
               );
             },
           );

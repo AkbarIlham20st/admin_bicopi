@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/account_provider.dart';
-import '../../models/user_model.dart';
-import '../../models/admin_model.dart' as admin_model;
-import '../../models/affiliate_model.dart';
+import 'package:admin_bicopi/models/user_model.dart';
+import 'package:admin_bicopi/models/admin_model.dart' as admin_model;
+import 'package:admin_bicopi/models/affiliate_model.dart';
 
 class OptionPage extends StatefulWidget {
   const OptionPage({super.key});
@@ -51,17 +51,25 @@ class _OptionPageState extends State<OptionPage> {
               const Text('User Accounts', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ...provider.users.map((user) => AccountCard(
-                title: user.name,
-                subtitle: user.email,
+                title: user.namaLengkap ?? "",
+                subtitle: user.users?.email ?? "",
                 icon: Icons.person,
               )),
               const SizedBox(height: 16),
               const Text('Affiliate Accounts', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ...provider.affiliates.map((affiliate) => AccountCard(
-                title: affiliate.name,
-                subtitle: affiliate.email,
+                title: affiliate.users?.username ?? "",
+                subtitle: affiliate.users?.email ?? "",
                 icon: Icons.handshake,
+              )),
+              const SizedBox(height: 16),
+              const Text('Cashier Accounts', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              ...provider.kasirs.map((affiliate) => AccountCard(
+                title: affiliate.username,
+                subtitle: affiliate.email,
+                icon: Icons.computer_outlined,
               )),
               const SizedBox(height: 32),
               Center(
@@ -103,9 +111,9 @@ class AccountCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
+      margin: const EdgeInsets.symmetric(vertical: 2),
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       child: ListTile(
         leading: Icon(icon, size: 32),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
