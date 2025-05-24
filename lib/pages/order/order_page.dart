@@ -1,7 +1,8 @@
+import 'package:admin_bicopi/models/order_model.dart';
+import 'package:admin_bicopi/providers/order_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:admin_bicopi/providers/order_provider.dart';
-import 'package:admin_bicopi/widgets/order_card.dart';
+import 'order_detail_page.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
@@ -10,48 +11,77 @@ class OrderPage extends StatefulWidget {
   State<OrderPage> createState() => _OrderPageState();
 }
 
-class _OrderPageState extends State<OrderPage> with SingleTickerProviderStateMixin {
+class _OrderPageState extends State<OrderPage> with TickerProviderStateMixin {
   late TabController _tabController;
-
-  final List<String> statuses = ['In Order', 'In Process', 'Complete'];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: statuses.length, vsync: this);
-    Future.microtask(() => Provider.of<OrderProvider>(context, listen: false).fetchOrders());
+    _tabController = TabController(length: 3, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<OrderProvider>(context, listen: false).fetchAllOrders();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<OrderProvider>(context);
+
     return Scaffold(
-        appBar: AppBar(
-        title: const Text('Orders'),
-    bottom: TabBar(
-    controller: _tabController,
-    onTap: (index) {
-// Optional: jika ingin reload data saat tab berpindah
-// Provider.of<OrderProvider>(context, listen: false).fetchOrders();
-    },
-    tabs: statuses.map((s) => Tab(text: s)).toList(),
-    ),
-    ),
-    body: TabBarView(
-    controller: _tabController,
-    children: statuses.map((status) {
-    final orders = provider.getByStatus(status);
+      appBar: AppBar(
+        title: const Text('Order Page'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'In Order'),
+            Tab(text: 'In Process'),
+            Tab(text: 'Completed'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildOrderList(provider.inOrderList, provider),
+          _buildOrderList(provider.inProcessList, provider),
+          _buildOrderList(provider.completedList, provider),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrderList(List<OrderModel> orders, OrderProvider provider) {
     if (orders.isEmpty) {
-    return const Center(child: Text('No orders found'));
+      return const Center(child: Text('No orders found.'));
     }
+
     return ListView.builder(
       itemCount: orders.length,
       itemBuilder: (context, index) {
-        return OrderCard(order: orders[index]);
+        final order = orders[index];
+        return Card(
+          margin: const EdgeInsets.all(8),
+          child: ListTile(
+            title: Text('Order No: ${order.orderNo}'),
+            subtitle: Text(
+                'Meja: ${order.nomorMeja} | Total: Rp${order.totalHarga.toStringAsFixed(0)}'),
+            trailing: Text(order.status),
+            onTap: () async {
+              final shouldRefresh = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => OrderDetailPage(order: order),
+                ),
+              );
+
+              // Perbarui data jika user mengubah status
+              if (shouldRefresh == true) {
+                provider.fetchAllOrders();
+              }
+            },
+          ),
+        );
       },
-    );
-    }).toList(),
-    ),
     );
   }
 }
