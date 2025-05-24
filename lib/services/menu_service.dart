@@ -18,8 +18,23 @@ class MenuService {
   }
 
   Future<void> addMenu(MenuModel menu) async {
-    await _client.from('menu').insert(menu.toJson());
+    final now = DateTime.now().toIso8601String();
+
+    final data = {
+      'nama_menu': menu.title,
+      'deskripsi_menu': menu.description,
+      'harga_menu': menu.price,
+      'foto_menu': menu.imageUrl,
+      'kategori': menu.category,
+      'id_kategori_menu': menu.categoryId,
+      'created_at': now,
+      'updated_at': now,
+    };
+
+    final response = await _client.from('menu').insert(data);
+    print('Insert response: $response');
   }
+
 
   Future<void> updateMenu(String id, MenuModel menu) async {
     await _client

@@ -28,16 +28,24 @@ class MenuPage extends StatelessWidget {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            final result = await Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => EditMenuPage()),
             );
+            if (result == 'added') {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Menu berhasil ditambahkan')),
+              );
+            } else if (result == 'updated') {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Menu berhasil diperbarui')),
+              );
+            }
           },
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
         ),
       ),
     );
-
   }
 }

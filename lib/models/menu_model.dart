@@ -6,8 +6,6 @@ class MenuModel {
   final double price;
   final String category;
   final int categoryId;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
 
   MenuModel({
     this.id,
@@ -17,8 +15,6 @@ class MenuModel {
     required this.price,
     required this.category,
     required this.categoryId,
-    this.createdAt,
-    this.updatedAt,
   });
 
   factory MenuModel.fromJson(Map<String, dynamic> json) {
@@ -30,8 +26,6 @@ class MenuModel {
       price: (json['harga_menu'] as num).toDouble(),
       category: json['kategori'],
       categoryId: json['id_kategori_menu'],
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
     );
   }
 
@@ -44,8 +38,18 @@ class MenuModel {
       'harga_menu': price,
       'kategori': category,
       'id_kategori_menu': categoryId,
-      'created_at': createdAt?.toIso8601String(),
-      'updated_at': updatedAt?.toIso8601String(),
+    };
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'price': price,
+      'image_url': imageUrl,
+      'category': category,
+      'category_id': categoryId,
     };
   }
 }

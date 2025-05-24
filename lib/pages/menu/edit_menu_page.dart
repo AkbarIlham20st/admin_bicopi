@@ -57,7 +57,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
     if (_formKey.currentState!.validate()) {
       final menuProvider = Provider.of<MenuProvider>(context, listen: false);
       final menu = MenuModel(
-        id: widget.menu?.id, // id only exists when editing
+        id: widget.menu?.id,
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
         price: double.parse(_priceController.text.trim()),
@@ -68,13 +68,14 @@ class _EditMenuPageState extends State<EditMenuPage> {
 
       if (widget.menu == null) {
         await menuProvider.addMenu(menu);
+        Navigator.pop(context, 'added'); // <== kirim flag 'added'
       } else {
-        await menuProvider.updateMenu(menu.id!, menu);
+        await menuProvider.updateMenu(widget.menu!.id!, menu);
+        Navigator.pop(context, 'updated'); // <== kirim flag 'updated'
       }
-
-      Navigator.pop(context);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
