@@ -1,82 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../models/order_model.dart';
-import '../../providers/order_provider.dart';
-import 'package:admin_bicopi/widgets/order_card.dart';
-import 'order_detail_page.dart';
+import 'package:admin_bicopi/models/order_model.dart';
 
-class OrderTab extends StatelessWidget {
-  const OrderTab({super.key});
+class OrderCard extends StatelessWidget {
+  final OrderModel order;
+  final VoidCallback? onTap;
+
+  const OrderCard({
+    super.key,
+    required this.order,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Column(
-        children: [
-          const TabBar(
-            labelColor: Colors.black,
-            indicatorColor: Colors.black,
-            tabs: [
-              Tab(text: 'In Order'),
-              Tab(text: 'In Process'),
-              Tab(text: 'Complete'),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                OrderList(status: 'In Order'),
-                OrderList(status: 'In Process'),
-                OrderList(status: 'Complete'),
-              ],
-            ),
-          ),
-        ],
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: ListTile(
+        title: Text('Order #${order.orderNo}'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Meja: ${order.nomorMeja}'),
+            Text('Pelanggan: ${order.namaPelanggan}'),
+            Text('Total Item: ${order.totalItem}'),
+            Text('Status: ${order.status}'),
+          ],
+        ),
+        trailing: Text('Rp ${order.totalHarga.toStringAsFixed(0)}'),
+        onTap: onTap,
       ),
-    );
-  }
-}
-
-class OrderList extends StatelessWidget {
-  final String status;
-
-  const OrderList({super.key, required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    final orderProvider = Provider.of<OrderProvider>(context);
-    return FutureBuilder<List<OrderModel>>(
-      future: orderProvider.fetchOrdersByStatus(status),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('Tidak ada pesanan'));
-        } else {
-          final orders = snapshot.data!;
-          return ListView.builder(
-            padding: const EdgeInsets.all(8),
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final order = orders[index];
-              return OrderCard(
-                order: order,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => OrderDetailPage(order: order),
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        }
-      },
     );
   }
 }
