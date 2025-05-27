@@ -25,30 +25,43 @@ class OrderDetailPage extends StatelessWidget {
               '- ${item['qty']}x ${item['nama_menu']} @Rp${item['harga']} = Rp${item['subtotal']}',
             )),
             const Spacer(),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    await OrderService().updateOrderStatus(order.id, 'In Process');
-                    Navigator.pop(context, true); // Return to refresh
-                  },
-                  child: const Text('Set to In Process'),
-                ),
-                const SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    debugPrint('=== CETAK STRUK ===');
-                    debugPrint('Order No: ${order.orderNo}');
-                    debugPrint('Meja: ${order.nomorMeja}');
-                    for (var item in order.items) {
-                      debugPrint('${item['qty']}x ${item['nama_menu']} @${item['harga']} = ${item['subtotal']}');
-                    }
-                    debugPrint('Total: Rp${order.totalHarga.toStringAsFixed(0)}');
-                  },
-                  child: const Text('Cetak Struk'),
-                ),
-              ],
-            )
+
+            // Kondisional tombol
+            if (order.status == 'In Order') ...[
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      await OrderService().updateOrderStatus(order.id, 'In Process');
+                      Navigator.pop(context, true);
+                    },
+                    child: const Text('Set to In Process'),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      debugPrint('=== CETAK STRUK ===');
+                      debugPrint('Order No: ${order.orderNo}');
+                      debugPrint('Meja: ${order.nomorMeja}');
+                      for (var item in order.items) {
+                        debugPrint('${item['qty']}x ${item['nama_menu']} @${item['harga']} = ${item['subtotal']}');
+                      }
+                      debugPrint('Total: Rp${order.totalHarga.toStringAsFixed(0)}');
+                    },
+                    child: const Text('Cetak Struk'),
+                  ),
+                ],
+              )
+            ] else if (order.status == 'In Process') ...[
+              ElevatedButton(
+                onPressed: () async {
+                  await OrderService().updateOrderStatus(order.id, 'Completed');
+                  Navigator.pop(context, true);
+                },
+                child: const Text('Set to Completed'),
+              )
+            ]
+            // Tidak perlu else untuk 'Completed', karena tidak ada tombol
           ],
         ),
       ),
