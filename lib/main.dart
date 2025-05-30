@@ -1,3 +1,4 @@
+import 'package:admin_bicopi/providers/stock_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'pages/home_page.dart';
@@ -18,6 +19,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => MenuProvider()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
         ChangeNotifierProvider(create: (_) => AccountProvider()),
+        ChangeNotifierProvider(create: (_) => StockProvider()),
       ],
       child: const MyApp(),
     ),

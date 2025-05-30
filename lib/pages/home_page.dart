@@ -1,3 +1,4 @@
+import 'package:admin_bicopi/pages/stock/stock_page.dart';
 import 'package:flutter/material.dart';
 import 'order/order_page.dart';
 import 'menu/menu_page.dart';
@@ -16,6 +17,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const OrderPage(),
     const MenuPage(),
+    const StockPage(),
     const OptionPage(),
   ];
 
@@ -31,6 +33,7 @@ class _HomePageState extends State<HomePage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Order'),
           BottomNavigationBarItem(icon: Icon(Icons.restaurant_menu), label: 'Menu'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_basket), label: 'Stock'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Option'),
         ],
       ),
