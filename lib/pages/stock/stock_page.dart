@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../providers/stock_provider.dart';
 import 'package:admin_bicopi/pages/stock/stock_tab_page.dart';
 
+import 'add_stock_page.dart';
+
 class StockPage extends StatelessWidget {
   const StockPage({super.key});
 
@@ -28,6 +30,15 @@ class StockPage extends StatelessWidget {
             StockTabPage(category: 'Drink'),
             StockTabPage(category: 'Snack'),
           ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddStockPage()),
+            );
+          },
+          child: const Icon(Icons.add),
         ),
       ),
     );

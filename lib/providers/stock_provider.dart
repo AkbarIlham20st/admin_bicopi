@@ -11,7 +11,10 @@ class StockProvider with ChangeNotifier {
   List<StockModel> getItemsByCategory(String category) {
     return _stocks.where((item) => item.category == category).toList();
   }
-
+  void addStock(StockModel newStock) {
+    _stocks.add(newStock);
+    notifyListeners();
+  }
   Future<void> fetchStocks() async {
     try {
       final data = await _service.fetchStocks();
@@ -21,4 +24,5 @@ class StockProvider with ChangeNotifier {
       print('[ERROR] fetchStocks: $e');
     }
   }
+
 }

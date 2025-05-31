@@ -15,11 +15,24 @@ class StockDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Nama: ${item.name}", style: TextStyle(fontSize: 18)),
+            Text("Nama: ${item.name}", style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 8),
             Text("Kategori: ${item.category}"),
+            const SizedBox(height: 16),
+            const Text("Detail Stok:", style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Text("Stok tersedia: ${item.menuStok}"),
+            Expanded(
+              child: ListView.builder(
+                itemCount: item.menuStok.length,
+                itemBuilder: (context, index) {
+                  final stok = item.menuStok[index];
+                  return ListTile(
+                    title: Text(stok.namaItem),
+                    trailing: Text('Jumlah: ${stok.totalItem}'),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),

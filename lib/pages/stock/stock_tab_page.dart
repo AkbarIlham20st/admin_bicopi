@@ -50,6 +50,19 @@ class _StockTabPageState extends State<StockTabPage> {
                 title: Text(menu.name),
                 subtitle: Text('Kategori: ${menu.category}'),
                 trailing: Text('Stok: ${stokMinimum?.toString() ?? "-"}'),
+                onTap: () async {
+                  final shouldRefresh = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => StockDetailPage(item: menu,),
+                    ),
+                  );
+
+                  // Perbarui data jika user mengubah status
+                  // if (shouldRefresh == true) {
+                  //   provider.fetchAllOrders();
+                  // }
+                },
               ),
             );
 
