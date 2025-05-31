@@ -5,10 +5,7 @@ class StockService {
   final supabase = Supabase.instance.client;
 
   Future<List<StockModel>> fetchStocks() async {
-    final response = await supabase
-        .from('menu')
-        .select('id_menu, nama_menu, kategori, menu_stok(stok_dapur(id_stok, nama_item, total_item))');
-
+    final response = await supabase.from('menu_with_stok').select();
     print('[DEBUG] Response: $response');
 
     return (response as List).map((e) => StockModel.fromJson(e)).toList();

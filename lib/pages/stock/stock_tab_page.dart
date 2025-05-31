@@ -38,36 +38,24 @@ class _StockTabPageState extends State<StockTabPage> {
         return ListView.builder(
           itemCount: items.length,
           itemBuilder: (context, index) {
-            final item = items[index];
-            final hasStock = item.menuStok.isNotEmpty;
-            return Card(
-              margin: const EdgeInsets.all(8),
-              child: ListTile(
-                title: Text(item.name),
-                subtitle: Text(
-                  hasStock
-                      ? 'Stok tersedia: ${item.menuStok.first.totalItem}'
-                      : 'Belum ada stok',
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: hasStock
-                    ? () async {
-                  final shouldRefresh = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => StockDetailPage(item: item),
-                    ),
-                  );
+            final menu = items[index];
 
-                  if (shouldRefresh == true) {
-                    provider.fetchStocks();
-                  }
-                }
-                    : null, // Tidak bisa ditekan kalau tidak ada stok
+            // Hitung stok minimal dari menuStok
+            final stokMinimum = menu.menuStok.isNotEmpty
+                ? menu.menuStok.map((item) => item.totalItem).reduce((a, b) => a < b ? a : b)
+                : null;
+
+            return Card(
+              child: ListTile(
+                title: Text(menu.name),
+                subtitle: Text('Kategori: ${menu.category}'),
+                trailing: Text('Stok: ${stokMinimum?.toString() ?? "-"}'),
               ),
             );
+
           },
         );
+
       },
     );
   }

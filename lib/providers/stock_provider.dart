@@ -14,9 +14,8 @@ class StockProvider with ChangeNotifier {
 
   Future<void> fetchStocks() async {
     try {
-      print('[DEBUG] Fetching stok...');
-      final results = await StockService().fetchStocks();
-      _stocks = results; // ✅ BUKAN satu object
+      final data = await _service.fetchStocks();
+      _stocks = data;
       notifyListeners();
     } catch (e) {
       print('[ERROR] fetchStocks: $e');

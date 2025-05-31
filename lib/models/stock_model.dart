@@ -11,7 +11,7 @@ class StockItem {
 
   factory StockItem.fromJson(Map<String, dynamic> json) {
     return StockItem(
-      idStok: json['id_stok'] as String,
+      idStok: json['id_stok'].toString(),
       namaItem: json['nama_item'] as String,
       totalItem: json['total_item'] as int,
     );
@@ -32,10 +32,10 @@ class StockModel {
   });
 
   factory StockModel.fromJson(Map<String, dynamic> json) {
-    final stokList = json['menu_stok'] as List<dynamic>? ?? [];
+    final stokList = json['stok_items'] as List<dynamic>? ?? [];
 
     return StockModel(
-      idMenu: json['id_menu'] as String,
+      idMenu: json['id_menu'].toString(),
       name: json['nama_menu'] as String,
       category: json['kategori'] as String,
       menuStok: stokList.map((e) => StockItem.fromJson(e)).toList(),
