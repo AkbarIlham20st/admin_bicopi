@@ -1,5 +1,5 @@
 class StockItem {
-  final String idStok;
+  final int idStok;
   final String namaItem;
   final int totalItem;
 
@@ -11,7 +11,7 @@ class StockItem {
 
   factory StockItem.fromJson(Map<String, dynamic> json) {
     return StockItem(
-      idStok: json['id_stok'].toString(),
+      idStok: json['id_stok'] as int,
       namaItem: json['nama_item'] as String,
       totalItem: json['total_item'] as int,
     );

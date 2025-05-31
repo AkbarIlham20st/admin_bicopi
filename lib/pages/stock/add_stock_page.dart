@@ -12,10 +12,32 @@ class AddStockPage extends StatefulWidget {
 
 class _AddStockPageState extends State<AddStockPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _menuNameController = TextEditingController();
-  final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _itemQtyController = TextEditingController();
+  final TextEditingController _itemNameController = TextEditingController();
+
   String _selectedCategory = 'Food';
+  String? _selectedItemName;
+  List<String> _namaItemList = [];
+  bool _isOther = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = Provider.of<StockProvider>(context);
+    final allItems = provider.stocks.expand((stock) => stock.menuStok).toList();
+    final itemsByCategory = allItems
+        .where((item) {
+      final parent = provider.stocks.firstWhere((s) =>
+          s.menuStok.contains(item));
+      return parent.category == _selectedCategory;
+    })
+        .map((item) => item.namaItem)
+        .toSet()
+        .toList();
+    setState(() {
+      _namaItemList = itemsByCategory;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,40 +52,103 @@ class _AddStockPageState extends State<AddStockPage> {
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 items: ['Food', 'Drink', 'Snack']
-                    .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                    .map((cat) =>
+                    DropdownMenuItem(value: cat, child: Text(cat)))
                     .toList(),
-                onChanged: (val) => setState(() => _selectedCategory = val!),
+                onChanged: (val) {
+                  setState(() {
+                    _selectedCategory = val!;
+                    _selectedItemName = null;
+                    _isOther = false;
+                    final provider = Provider.of<StockProvider>(
+                        context, listen: false);
+                    final allItems = provider.stocks.expand((stock) =>
+                    stock.menuStok).toList();
+                    final itemsByCategory = allItems
+                        .where((item) {
+                      final parent = provider.stocks.firstWhere((s) =>
+                          s.menuStok.contains(item));
+                      return parent.category == _selectedCategory;
+                    })
+                        .map((item) => item.namaItem)
+                        .toSet()
+                        .toList();
+                    _namaItemList = itemsByCategory;
+                  });
+                },
                 decoration: const InputDecoration(labelText: "Kategori"),
               ),
-              TextFormField(
-                controller: _itemNameController,
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: _selectedItemName,
                 decoration: const InputDecoration(labelText: "Nama Bahan"),
-                validator: (value) => value == null || value.isEmpty ? "Wajib diisi" : null,
+                items: [
+                  ..._namaItemList.map((name) =>
+                      DropdownMenuItem(value: name, child: Text(name))),
+                  const DropdownMenuItem(
+                      value: 'other', child: Text('Lainnya...')),
+                ],
+                onChanged: (val) {
+                  setState(() {
+                    if (val == 'other') {
+                      _isOther = true;
+                      _selectedItemName = null;
+                    } else {
+                      _isOther = false;
+                      _selectedItemName = val;
+                    }
+                  });
+                },
+                validator: (val) {
+                  if (!_isOther && (val == null || val.isEmpty)) {
+                    return 'Wajib pilih nama bahan';
+                  }
+                  return null;
+                },
               ),
+              if (_isOther)
+                TextFormField(
+                  controller: _itemNameController,
+                  decoration: const InputDecoration(
+                      labelText: "Nama Bahan (baru)"),
+                  validator: (val) =>
+                  val == null || val.isEmpty ? 'Wajib diisi' : null,
+                ),
               TextFormField(
                 controller: _itemQtyController,
                 decoration: const InputDecoration(labelText: "Jumlah Stok"),
                 keyboardType: TextInputType.number,
-                validator: (value) => value == null || value.isEmpty ? "Wajib diisi" : null,
+                validator: (value) =>
+                value == null || value.isEmpty ? "Wajib diisi" : null,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    final newItem = StockModel(
-                      idMenu: UniqueKey().toString(),
-                      name: _menuNameController.text,
-                      category: _selectedCategory,
-                      menuStok: [
-                        StockItem(
-                          idStok: UniqueKey().toString(),
-                          namaItem: _itemNameController.text,
-                          totalItem: int.parse(_itemQtyController.text),
-                        )
-                      ],
-                    );
+                    final namaItem = _isOther
+                        ? _itemNameController.text
+                        : _selectedItemName!;
+                    final newQty = int.tryParse(_itemQtyController.text) ?? 0;
+                    final provider =
+                    Provider.of<StockProvider>(context, listen: false);
+                    final existing = provider.findStockItemByName(namaItem);
 
-                    Provider.of<StockProvider>(context, listen: false).addStock(newItem);
+                    if (existing != null) {
+                      await provider.updateStockItem(
+                        idStok: existing.idStok,
+                        totalItem: existing.totalItem + newQty,
+                      );
+                    } else {
+                      await provider.addStockItem(
+                        namaItem: namaItem,
+                        totalItem: newQty,
+                        kategori: _selectedCategory,
+                      );
+                    }
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Stok berhasil disimpan")),
+                    );
                     Navigator.pop(context);
                   }
                 },
