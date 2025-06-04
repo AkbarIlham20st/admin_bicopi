@@ -1,6 +1,7 @@
 {
   "name": "supabase-fetch-menu",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "start": "node fetchMenu.js"
   },
