@@ -8,7 +8,7 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 async function fetchMenu() {
   const { data: menu, error } = await supabase
     .from('menu')
-    .select('id_menu')
+    .select('nama_menu')
 
   if (error) {
     console.error('❌ Gagal mengambil data:', error.message)
