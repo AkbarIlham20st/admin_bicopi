@@ -1,0 +1,10 @@
+{
+  "name": "supabase-fetch-menu",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node fetchMenu.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  }
+}
